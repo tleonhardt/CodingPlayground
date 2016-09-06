@@ -7,6 +7,7 @@ DataFrame and finally to export that DataFrame as an HTML table.
 
 import re
 import pandas as pd
+import numpy as np
 
 
 MY_REGEX = r"/Node Roles/\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b"
@@ -34,7 +35,7 @@ def read_lines(fname):
     return content
 
 
-def convert_to_pandas_df(csv_lines, delim=',', column_names=None, drop=None, index=None):
+def csv_list_to_pandas_df(csv_lines, delim=',', column_names=None, drop=None, index=None):
     """ Converts a list of CSV strings to a Pandas DataFrame and returns that DataFrame.
 
     @param data : list[str] - list of CSV strings
@@ -64,6 +65,38 @@ def convert_to_pandas_df(csv_lines, delim=',', column_names=None, drop=None, ind
 
     return df
 
+def csv_row_to_pandas_series(csv_row, delim=',', index_names=None, name=None, drop=None):
+    """ Converts a CSV string to a Pandas Series and returns that Series, which
+    is suitable for appending to a Pandas DataFrame.
+
+    @param csv_row : str - CSV strings
+    @param delim: str - delimitter character
+    @param index_names : list[str] - index names
+    @param drop : list[str] - indexes to drop
+    @param name : str - index to use for overall Series name (automatically dropped)
+    @return pd.Series - Pandas Series containing contents of the CSV string
+    """
+    # Split the CSV strings into a list of strings, split at the delimiter
+    csv_data = csv_row.strip().split(delim)
+
+    # Create Pandas Series from the data
+    csv_series = pd.Series(csv_data, index=index_names)
+
+    # Drop the name index and set it as the overall series name
+    series_name = csv_series[name]
+    csv_series.drop(name, inplace=True)
+    csv_series.name = series_name
+
+    # Drop any columns we don't care about
+    if drop is not None:
+        for idx_name in drop:
+            csv_series.drop(idx_name, inplace=True)
+
+    # Convert any 'object' types to numberic ones, where possible
+    csv_series = csv_series.convert_objects(convert_numeric=True)
+
+    return csv_series
+
 
 if __name__ == '__main__':
     lines = read_lines('wm.txt')
@@ -74,13 +107,33 @@ if __name__ == '__main__':
     # Strip off the first character and any trailing whitespace
     matches = [match.strip()[1:] for match in matched_lines]
 
-    nodes = convert_to_pandas_df(matches, delim='/',
-                                 column_names=['DeleteMe', 'IP', 'Role', 'Subrole', 'Confidence'],
-                                 drop=['DeleteMe'], index='IP')
+    #----- Add all of the data to a DataFrame at once
+    nodes = csv_list_to_pandas_df(matches, delim='/', drop=['DeleteMe'], index='IP',
+                                  column_names=['DeleteMe', 'IP', 'Role', 'Subrole', 'Confidence'])
 
     # Convert the Pandas DataFrame to an HTML Table
     html_table = nodes.to_html()
 
     # Save off the HTML table to an html file
     with open('mytable.html', 'w') as output_file:
-        output_file.writelines(html_table)
+       output_file.writelines(html_table)
+
+
+    #----- Now do the same thing, but do it 1 line at a time
+    # Create an Empty Pandas DataFrame
+    more_nodes = pd.DataFrame(columns=['Role', 'Subrole', 'Confidence'])
+
+    # Loop through each match, dealing with converting and adding 1 line at a time
+    for match in matches:
+        # Create a Pandas Series for the match
+        series = csv_row_to_pandas_series(match, delim='/', name='IP', drop=['DeleteMe'],
+                                          index_names=['DeleteMe', 'IP', 'Role', 'Subrole', 'Confidence'])
+        # Set the value for this Series within the existing DataFrame
+        more_nodes.loc[series.name] = series
+
+    # Convert integer types so they aren't float
+    more_nodes.Role = more_nodes.Role.astype(int)
+    more_nodes.Subrole = more_nodes.Subrole.astype(int)
+    
+    print(more_nodes)
+    print(more_nodes.dtypes)
