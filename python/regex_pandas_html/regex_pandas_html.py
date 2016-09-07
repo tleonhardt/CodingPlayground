@@ -122,6 +122,7 @@ if __name__ == '__main__':
     #----- Now do the same thing, but do it 1 line at a time
     # Create an Empty Pandas DataFrame
     more_nodes = pd.DataFrame(columns=['Role', 'Subrole', 'Confidence'])
+    more_nodes.index.name = 'IP'
 
     # Loop through each match, dealing with converting and adding 1 line at a time
     for match in matches:
@@ -134,6 +135,6 @@ if __name__ == '__main__':
     # Convert integer types so they aren't float
     more_nodes.Role = more_nodes.Role.astype(int)
     more_nodes.Subrole = more_nodes.Subrole.astype(int)
-    
+
     print(more_nodes)
     print(more_nodes.dtypes)
