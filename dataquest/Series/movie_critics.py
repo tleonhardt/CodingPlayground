@@ -36,4 +36,27 @@ rt_custom = fandango_by_name['RottenTomatoes']
 
 # Integer index is preserved, thus a Series acts both like a dictionary and a list
 fiveten = series_custom[5:10]
-print(fiveten)
+
+# We can extract an index, sort how we chose and re-index
+original_index = series_custom.index
+sorted_index = sorted(original_index)
+sorted_by_index = series_custom.reindex(sorted_index)
+
+# Or we can more easily just use the sort_index() method
+sc2 = series_custom.sort_index()
+
+# And if we want to sort by the values, we can do that as well
+sc3 = series_custom.sort_values()
+
+# Normalize series_custom (currently on a 0 to 100 point scale) to a 0 to 5 point scale
+series_normalized = series_custom / 20
+
+# Comparing and filtering
+criteria_one = series_custom > 50
+criteria_two = series_custom < 75
+both_criteria = series_custom[criteria_one & criteria_two]
+
+# Data Alignment allows us to take two different sweries with a common index and apply operations
+rt_critics = pd.Series(fandango['RottenTomatoes'].values, index=fandango['FILM'])
+rt_users = pd.Series(fandango['RottenTomatoes_User'].values, index=fandango['FILM'])
+rt_mean = (rt_critics + rt_users)/2
