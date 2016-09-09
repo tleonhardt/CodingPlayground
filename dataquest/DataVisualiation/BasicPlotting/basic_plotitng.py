@@ -18,6 +18,11 @@ The intent is to gain some familiarity with Matplotlib
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib as mpl
+
+# Reset matplotlib defaults
+mpl.rcParams.update(mpl.rcParamsDefault)
+
 
 # Use Pandas to read the CSV file into a DataFrame
 forest_fires = pd.read_csv('forest_fires.csv')
@@ -72,3 +77,45 @@ plt.show()
 
 
 ## Horizontal Bar Graphs
+# barh() is a horizontal bar chart and the first variable passed in is plotted on hte y-axis
+area_by_month = forest_fires.pivot_table(index="month", values="area", aggfunc=np.mean)
+area_by_day = forest_fires.pivot_table(index="day", values="area", aggfunc=np.mean)
+# We need to take an extra step to deal with an index consisting of strings
+# Use the barh() method to plot range(len(area_by_month)) on the y-axis and area_by_month on the x-axis
+plt.figure()
+plt.barh(range(len(area_by_month)), area_by_month)
+plt.ylabel('month')
+plt.xlabel('burned area (ha)')
+plt.show()
+
+# Use the barh() method to plot range(len(area_by_day)) on the y-axis and area_by_day on the x-axis
+plt.figure()
+plt.barh(range(len(area_by_day)), area_by_day)
+plt.ylabel('day of week')
+plt.xlabel('burned area (ha)')
+plt.show()
+
+## Chart Labels
+# Make a scatter plot with the wind column of forest_fires on the x-axis and the area column of forest_fires on the y-axis
+plt.figure()
+plt.scatter(forest_fires['wind'], forest_fires['area'])
+plt.title('Wind speed vs fire area')
+plt.xlabel('Wind speed when fire started')
+plt.ylabel('Area consumed by fire')
+plt.show()
+
+
+## Plot Aesthetics
+# Switch to the "fivethirtyeight" style.
+plt.style.use("fivethirtyeight")
+# plt.style.use("ggplot")
+# plt.style.use("dark_background")
+# plt.style.use("bmh")
+
+# Make a scatter plot the rain column of forest_fires on the x-axis and the area column of forest_fires on the y-axis
+plt.figure()
+plt.scatter(forest_fires['rain'], forest_fires['area'])
+plt.title('Rain vs Area for forest fires')
+plt.xlabel('rainfall when the fire occurred (mm/m2)')
+plt.ylabel('Area consumed by fire (ha)')
+plt.show()
