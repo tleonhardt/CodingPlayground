@@ -19,7 +19,7 @@ import pandas as pd
 import numpy as np
 
 # Use Pandas to read in the Fandango data into a DataFrame
-fandango = pd.read_csv('fandango_score_comparison.csv')
+fandango = pd.read_csv('../data/fandango_score_comparison.csv')
 
 # Selecting rows can be done using either bracket notation with slices or iloc and integrs or lists of integers
 first_last = fandango.iloc[[0,-1]]

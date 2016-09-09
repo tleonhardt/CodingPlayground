@@ -24,8 +24,8 @@ Here are descriptions of a few of the columns (there are 21 columns in total):
 import pandas as pd
 
 # Read the datasets into Pandas DataFrames
-all_ages = pd.read_csv("all-ages.csv")
-recent_grads = pd.read_csv("recent-grads.csv")
+all_ages = pd.read_csv("../data/all-ages.csv")
+recent_grads = pd.read_csv("../data/recent-grads.csv")
 
 # Use the Total column to calculate the number of people who fall under each Major_category for each dataset
 all_ages_major_categories =  all_ages.pivot_table(index='Major_category', values='Total', aggfunc=sum).to_dict()

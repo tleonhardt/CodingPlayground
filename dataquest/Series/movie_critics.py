@@ -16,7 +16,7 @@ Github repo. Here are some of the columns in the dataset:
 import pandas as pd
 
 # Use Pandas to read in the Fandango data into a DataFrame and then print out the first two rows
-fandango = pd.read_csv('fandango_score_comparison.csv')
+fandango = pd.read_csv('../data/fandango_score_comparison.csv')
 
 # DataFrames use Series objects to represent the columns in the data
 # Select the FILM column, assign to the variable series_film, and print the first 5 values.

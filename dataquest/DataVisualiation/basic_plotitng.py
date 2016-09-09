@@ -20,12 +20,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib as mpl
 
+
+# Use Pandas to read the CSV file into a DataFrame
+forest_fires = pd.read_csv('../data/forest_fires.csv')
+
 # Reset matplotlib defaults
 mpl.rcParams.update(mpl.rcParamsDefault)
 
-
-# Use Pandas to read the CSV file into a DataFrame
-forest_fires = pd.read_csv('forest_fires.csv')
+# Switch default plot style if desired
+# plt.style.use("fivethirtyeight")
+# plt.style.use("ggplot")
+# plt.style.use("dark_background")
+# plt.style.use("bmh")
 
 # Enable interactive mode so plt.show() won't block
 plt.ion()
@@ -119,3 +125,7 @@ plt.title('Rain vs Area for forest fires')
 plt.xlabel('rainfall when the fire occurred (mm/m2)')
 plt.ylabel('Area consumed by fire (ha)')
 plt.show()
+
+
+# Reset matplotlib defaults so we don't effect any other scripts
+mpl.rcParams.update(mpl.rcParamsDefault)
