@@ -20,7 +20,7 @@ import seaborn as sns
 
 
 # Use Pandas to read the CSV file into a DataFrame
-births = pd.read_csv('births.csv')
+births = pd.read_csv('../data/births.csv')
 
 # Enable interactive mode so plt.show() won't block
 # plt.ion()
@@ -36,3 +36,13 @@ sns.plt.show()
 births.hist(column='agepreg')
 
 # Customizing Histogram: Distplot()
+sns.distplot(births['prglngth'], kde=False, axlabel='Pregnancy Length, weeks')
+sns.plt.show()
+
+sns.set_style('dark')
+sns.distplot(births['birthord'], kde=False, axlabel='Birth number')
+sns.plt.show()
+
+# Generate a boxplot with the birthord column on the x-axis and the agepreg column on the y-axis
+sns.boxplot(births['birthord'], births['agepreg'])
+sns.plt.show()
