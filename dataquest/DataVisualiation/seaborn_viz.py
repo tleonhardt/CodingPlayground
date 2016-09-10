@@ -5,14 +5,24 @@ presentation-ready data visualizations. While Seaborn uses Matplotlib under the 
 manipulate, and customize plots, it exposes a high-level API that abstracts away a lot of the
 internal Matplotlib logic.
 
-In this lesson, we'll be working with data from the National Survey of Family Growth. The data was
-collected from January 2002 to March 2003 and contains data on pregnancy, family life, and more.
-We've selected a few columns from the original data, which are:
-    prglngth -- the length of the pregnancy in weeks.
-    birthord -- which child this was for the pregnant mother.
-    birthwgt_lb1 -- the pounds portion of the birth weight.
-    birthwgt_oz1 -- the ounces portion of the birth weight.
-    agepreg -- the mother's age at the end of the pregnancy, in years.
+I couldn't find the 'births.csv' file used during this tutorail, so I switched to a different dataset
+so I could experiment with Seaborn.
+
+We'll be working with the data from the American Community Survey from a survey on job outcomes for recent college graduates based on the major they studied in college.
+
+You can find the cleaned up version of the dataset on FiveThirtyEight's Github repo.
+
+Here are some of the columns in the dataset:
+    Rank - Rank by median earnings
+    Major_code - Major code
+    Major - Major description
+    Major_category - Category of major
+    Total - Total number of people with major
+    Sample_size - Sample size (unweighted) of full-time
+    Men - Male graduates
+    Women - Female graduates
+    ShareWomen - Women as share of total
+    Employed - Number employed
 """
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -20,33 +30,34 @@ import seaborn as sns
 
 
 # Use Pandas to read the CSV file into a DataFrame
-births = pd.read_csv('../data/births.csv')
+recent_grads = pd.read_csv('../data/recent-grads.csv')
 
 # Enable interactive mode so plt.show() won't block
-# plt.ion()
-
-%matplotlib inline
+plt.ion()
 
 # Histogram: distplot()
-sns.distplot(births['prglngth'], kde=False)
-sns.plt.show()
+sns.distplot(recent_grads['Median'], kde=False)
 
 # Seaborn Styling
 # Just by importing Seaborn, the default styles are overriden for all plots
-births.hist(column='agepreg')
+recent_grads.hist(column='Median')
 
 # Customizing Histogram: Distplot()
-sns.distplot(births['prglngth'], kde=False, axlabel='Pregnancy Length, weeks')
-sns.plt.show()
+plt.figure()
+sns.distplot(recent_grads['Median'], kde=False, axlabel='Median Salary, $')
 
+# Customize overall style
+plt.figure()
 sns.set_style('dark')
-sns.distplot(births['birthord'], kde=False, axlabel='Birth number')
+sns.distplot(recent_grads['Median'], kde=False, axlabel='Median Salary, $')
 sns.plt.show()
 
 # Generate a boxplot with the birthord column on the x-axis and the agepreg column on the y-axis
-sns.boxplot(births['birthord'], births['agepreg'])
+plt.figure()
+sns.boxplot(recent_grads['Major_category'], recent_grads['Median'])
 sns.plt.show()
 
 # Pair Plot - n x n matrix of pairwise plots (need to make sure to not have any missing values)
-sns.pairplot(births[['agepreg', 'prglngth', 'birthord']])
+plt.figure()
+sns.pairplot(recent_grads[['Median', 'Total', 'Sample_size', 'Men', 'Women', 'ShareWomen', 'Employed']])
 sns.plt.show()
