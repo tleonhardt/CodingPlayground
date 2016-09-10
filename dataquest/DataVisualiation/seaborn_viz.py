@@ -46,3 +46,7 @@ sns.plt.show()
 # Generate a boxplot with the birthord column on the x-axis and the agepreg column on the y-axis
 sns.boxplot(births['birthord'], births['agepreg'])
 sns.plt.show()
+
+# Pair Plot - n x n matrix of pairwise plots (need to make sure to not have any missing values)
+sns.pairplot(births[['agepreg', 'prglngth', 'birthord']])
+sns.plt.show()
