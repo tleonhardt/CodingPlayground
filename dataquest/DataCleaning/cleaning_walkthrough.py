@@ -10,6 +10,7 @@ data of interest is spread over many different data sets.
 
 First we need to read in and clean multiple datasets and then merge them into a single useful dataset.
 """
+import numpy as np
 import os
 import pandas as pd
 import re
@@ -139,3 +140,37 @@ class_size = class_size[class_size['PROGRAM TYPE'] == 'GEN ED']
 
 
 ## Computing Average Class Sizes
+# Find the avergae values for each column for each DBN in class_size
+class_size = class_size.groupby('DBN').agg(np.mean)
+
+# DBN is now the index.  Reset the index, making DBN a column again
+class_size.reset_index(inplace=True)
+
+data['class_size'] = class_size
+
+
+## Condensing Demographics
+# Filter demographics and only select rows where schoolyear is 20112012
+data['demographics'] = data['demographics'][data['demographics']['schoolyear'] == 20112012]
+
+
+## Condensing Graduation
+# Filter graduation and only select rows where the Cohort column equals 2006
+data['graduation'] = data['graduation'][data['graduation']['Cohort'] == '2006']
+
+# Filter graduation and only select rows where the Demographic column equals 'Total Cohort'
+data['graduation'] = data['graduation'][data['graduation']['Demographic'] == 'Total Cohort']
+
+
+## Converting AP Test Scores
+cols = ['AP Test Takers ', 'Total Exams Taken', 'Number of Exams with scores 3 4 or 5']
+# Convert columns in ap_2010 to numeric values
+for col in cols:
+    data['ap_2010'][col] = pd.to_numeric(data['ap_2010'][col], errors='coerce')
+
+# Display the first few rows of ap_2010
+print(data['ap_2010'].head())
+
+
+### Now it is finally time to start merging the disparate datasets
+## Performing The Left Joins
