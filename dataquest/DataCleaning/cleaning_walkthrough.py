@@ -10,10 +10,13 @@ data of interest is spread over many different data sets.
 
 First we need to read in and clean multiple datasets and then merge them into a single useful dataset.
 """
+import matplotlib.pyplot as plt
 import numpy as np
 import os
 import pandas as pd
 import re
+
+from mpl_toolkits.basemap import Basemap
 
 # Directory containing all of the datasets
 data_dir= "../data/schools"
@@ -219,5 +222,170 @@ def first_2_chars(s):
 # Apply the function to the DBN column of combined, and assign result to a new column
 combined['school_dist'] = combined['DBN'].apply(first_2_chars)
 
-# Display the first few items in the school_dist column
-print(combined['school_dist'].head())
+
+### --------------- Analying Data
+# It is time to find correlations, make plots, and make maps.
+# The first step that we'll take is to find correlations between every column and sat_score.
+# This will help us figure out what columns might be interesting to investigate more or plot out.
+
+## Finding correlations
+# Correlations tell us how closely related two columns are. We'll be using the r value, also called
+# Pearson's correlation coefficient, which measures how closely two sequences of numbers are correlated.
+# An r value falls between -1 and 1, and tells you if the two columns are positively correlated, not
+# correlated, or negatively correlated. The closer to 1 the r value is, the more strongly positively
+# correlated the columns are. The closer to -1 the r value is, the more strongly negatively correlated
+# the columns are. The closer to 0 the r value is, the less the columns are correlated.
+#    In general r-values :
+#       - above .25 or below -.25 are enough to qualify a correlation as interesting (potentially relevant)
+#       - above .45 or below -.45 tend to be signficient correlations (usually relevant)
+#       - above .65 or below -.65 tend to be strong correlations (almost always relevant)
+# Find all possible correlations in the "combined" DataFrame
+correlations = combined.corr()
+
+# Filter correltaions so that only correlations for the column "sat_score" are shown
+correlations = correlations['sat_score']
+
+# Drop NaN values
+correlations = correlations.dropna()
+
+# Sort by correlation value
+correlations.sort(ascending=False, inplace=True)
+
+# Diplay all the rows in correlations with a correlation above 0.25 or below -0.25
+print('Significant correlations with overall SAT score:')
+print(correlations[abs(correlations) > 0.25])
+
+# Note the extremely high negative correlation (< -0.7) between SAT Scores and the percentage of
+# students receiving a free or reduced-cost lunch (frl_percent). The frl_percent is a direct measure
+# of the percentage of students living in (or near) poverty.
+
+## Plotting Enrollment
+# Enable matplotlib interactive
+plt.ion()
+
+# Plot Total Enrollment vs SAT Score
+combined.plot.scatter(x='sat_score', y='total_enrollment')
+plt.show()
+
+
+## Exploring Schools With Low SAT Scores And Enrollment
+# From looking at the plot we just generated, it doesn't appear that there's a Significant correlations
+# between SAT Score and total enrollment.  However, there is an interesting cluster of points at the
+# bottom left where total_enrollment and sat_score are both low.
+# Filter the combined Dataframe, and only keep rows with low sat_score and total_enrollment
+low_enrollment = combined[combined['total_enrollment'] < 1000]
+low_enrollment = combined[combined['sat_score'] < 1000]
+
+# Display all the items in the School Name column of low enrollment
+print('\nLow Enrollment schools with Low SAT Scores')
+print(low_enrollment['School Name'])
+
+# All of these schools appear to be international schools intended for recent
+# immigrants from a foreign country who speak English as a second language.
+
+
+## Plotting Language Learning Percentage
+# From our research in the last screen, we found that most of the high schools with low total
+# enrollment and low SAT scores are actually schools with a high percentage of English language
+# learners enrolled. This indicates that it's actually ell_percent that correlates strongly with
+# sat_score instead of total_enrollment
+combined.plot.scatter(x='sat_score', y='ell_percent')
+plt.show()
+
+
+## Mapping the Schools
+# It looks like ell_percent correlates with sat_score more strongly, because the scatterplot is
+# more linear. However, there's still the cluster with very high ell_percent and low sat_score,
+# which is the same group of international high schools that we investigated earlier.
+#    In order to explore this relationship, we'll want to map out ell_percent by school district,
+# so we can more easily see which parts of the city have a lot of English language learners.
+
+# Setup the Matplotlib Basemap centered on New York City
+plt.figure()
+m = Basemap(projection='merc',
+            llcrnrlat=40.496044,
+            urcrnrlat=40.915256,
+            llcrnrlon=-74.255735,
+            urcrnrlon=-73.700272,
+            resolution='i')
+m.drawmapboundary(fill_color='#85A6D9')
+m.drawcoastlines(color='#6D5F47', linewidth=.4)
+m.drawrivers(color='#6D5F47', linewidth=.4)
+
+# Convert the lat and lon columns of combined to lists
+longitudes = combined['lon'].tolist()
+latitudes = combined['lat'].tolist()
+
+# Plot the locations
+m.scatter(longitudes, latitudes, s=20, zorder=2, latlon=True)
+plt.show()
+
+
+## Plotting Out Statistics
+# Now that we can plot out the positions of the schools, we can start to display meaningful
+# information on maps, such as the percentage of English language learners by area.
+#
+# We can shade each point in the scatterplot by passing the keyword argument c into the scatter
+# method. The c keyword argument will accept a sequence of numbers, and will shade points
+# corresponding to lower numbers or higher numbers differently.
+#
+# Whatever sequence of numbers we pass into the c keyword argument will be converted to a range
+# from 0 to 1. These values will then be mapped onto a color map.
+plt.figure()
+m = Basemap(projection='merc',
+            llcrnrlat=40.496044,
+            urcrnrlat=40.915256,
+            llcrnrlon=-74.255735,
+            urcrnrlon=-73.700272,
+            resolution='i')
+m.drawmapboundary(fill_color='#85A6D9')
+m.drawcoastlines(color='#6D5F47', linewidth=.4)
+m.drawrivers(color='#6D5F47', linewidth=.4)
+
+# Convert the lat and lon columns of combined to lists
+longitudes = combined['lon'].tolist()
+latitudes = combined['lat'].tolist()
+
+# Plot the locations
+m.scatter(longitudes, latitudes, s=20, zorder=2, latlon=True, c=combined['ell_percent'], cmap='summer')
+plt.show()
+
+
+## Calculating District Level Statistics
+# Unfortunately, due to the number of schools, it's hard to interpret the map we made in the last
+# screen. It looks like uptown Manhattan and parts of Queens have a higher ell_percent, but we can't
+# be sure. One way to make it easier to read very granular statistics is to aggregate them. In this
+# case, we can aggregate based on district, which will enable us to plot ell_percent district by
+# district instead of school by school.
+
+# Find the average values for each column for each school_dist in combined
+districts = combined.groupby('school_dist').agg(np.mean)
+
+# Reset the index of districts, making school_dist a column again
+districts.reset_index(inplace=True)
+
+
+## Plotting ell_percent by District
+# Now that we've taken the mean of all the columns, we can plot out ell_percent by district. Not
+# only did we find the mean of ell_percent, we also took the mean of the lon and lat columns, which
+# will give us the coordinates for the center of each district.
+
+# Setup the Matplotlib Basemap centered on New York City
+plt.figure()
+m = Basemap(projection='merc',
+            llcrnrlat=40.496044,
+            urcrnrlat=40.915256,
+            llcrnrlon=-74.255735,
+            urcrnrlon=-73.700272,
+            resolution='i')
+m.drawmapboundary(fill_color='#85A6D9')
+m.drawcoastlines(color='#6D5F47', linewidth=.4)
+m.drawrivers(color='#6D5F47', linewidth=.4)
+
+# Convert the lat and lon columns of districts to lists
+longitudes = districts['lon'].tolist()
+latitudes = districts['lat'].tolist()
+
+# Plot the locations
+m.scatter(longitudes, latitudes, s=50, zorder=2, latlon=True, c=districts['ell_percent'], cmap='summer')
+plt.show()
