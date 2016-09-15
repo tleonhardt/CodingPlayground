@@ -168,9 +168,56 @@ cols = ['AP Test Takers ', 'Total Exams Taken', 'Number of Exams with scores 3 4
 for col in cols:
     data['ap_2010'][col] = pd.to_numeric(data['ap_2010'][col], errors='coerce')
 
-# Display the first few rows of ap_2010
-print(data['ap_2010'].head())
-
 
 ### Now it is finally time to start merging the disparate datasets
 ## Performing The Left Joins
+# Both the ap_2010 and the graduation datasets have many missing DBN values, so we'll use a left
+# join when we join the sat_results dataset with them. A left join means that our final Dataframe
+# will have all the same DBN values as the original sat_results Dataframe.
+# Merge sat_results, ap_2010, and graduation using left joins
+combined = data["sat_results"]
+combined = combined.merge(data['ap_2010'], how='left', on='DBN')
+combined = combined.merge(data['graduation'], how='left', on='DBN')
+
+## Performing the Inner Joins
+# Now that we've done the left joins, we still have class_size, demographics, survey, and
+# hs_directory left to merge into combined. Because these files contain information that's more
+# valuable to our analysis, and because they have fewer missing DBN values, we'll use the inner join
+# type when merging these into combined.
+combined = combined.merge(data['class_size'], how='inner', on='DBN')
+combined = combined.merge(data['demographics'], how='inner', on='DBN')
+combined = combined.merge(data['survey'], how='inner', on='DBN')
+combined = combined.merge(data['hs_directory'], how='inner', on='DBN')
+
+
+## Filling In Missing values
+# Since we did a number of left joins, we have a number of columns with missing data.  There are many
+# ways to deal with this, one is to replace missing values with the column mean.
+# Some analyses can deal with missing values (plotitng), but other analyses cannot (correlation).
+# Compute the means of all the columns in combined
+means = combined.mean()
+
+# Fill in any missing values in combined iwth the column means
+combined = combined.fillna(means)
+
+# Fill in any remaining missing values in combined with 0
+combined = combined.fillna(0)
+
+### We've finished cleaning and combining our data! We now have a clean dataset on which we can base our analysis.
+
+## Adding A School District Column
+# One type of analysis that we might want to do is mapping out statistics on a school district level.
+# In order to help us do this, it will be useful to add a column that specifies the school district to the dataset.
+# The school district is just the first two characters of the DBN.
+def first_2_chars(s):
+    """ Extract the first 2 characters of a string and return them.
+    @param s : str - input string
+    @return str - first 2 characters in s
+    """
+    return s[0:2]
+
+# Apply the function to the DBN column of combined, and assign result to a new column
+combined['school_dist'] = combined['DBN'].apply(first_2_chars)
+
+# Display the first few items in the school_dist column
+print(combined['school_dist'].head())
