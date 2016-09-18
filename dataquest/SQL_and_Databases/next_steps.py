@@ -23,7 +23,13 @@ lose_pop = facts[facts['population_growth'] < 0]
 
 print("There are {} countries that will lose population!".format(len(lose_pop)))
 
-# If this is true, it is a staggering fact, that NO countries have a negative population growth
+# If this is true, it is a staggering fact, that NO countries have a negative population growth.
+# Actually there is no way this should be true and leads me to believe that whoever extracted the
+# data from the original HTML version of the CIA World Factbook didn't do it correctly, and perhaps
+# didn't deal with negative numbers.
+#     Countries like Syria which have been torn by war most definitely have a negative population
+# growth rate in recent years, due in part to an increased death rate and in part to an increased
+# emmigration rate.
 
 
 # Which countries have the lowest/highest population density?
