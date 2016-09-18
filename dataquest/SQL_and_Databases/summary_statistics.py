@@ -149,3 +149,28 @@ print("Sum of distinct population values for large area countries = {}".format(s
 
 
 ## Arithmetic In SQL
+# There are times when we'll want to do some arithmetic on columns in a SQL table. One example is
+# making the counts in the population column easier to understand by expressing them in terms of
+# millions. Instead of a number like 9766442, we'd want to display 9.766442. We could do this in
+# Python, but it would be cumbersome to pull all the data into the Python environment, then
+# manipulate it. Instead, we can perform the math inside the SQL database engine:
+#   SELECT population / 1000000 FROM facts;
+
+
+# Use arithmetic operators in a SQL query to express population in terms of millions
+query = 'SELECT name, population / 1e6 FROM facts ORDER BY population DESC LIMIT 10;'
+population_millions = cur.execute(query).fetchall()
+print("Countries with largest populations (in Millions):\n{}".format(population_millions))
+
+
+## Arithmetic Between Columns
+# This modified the values of the columns before they were returned. SQL lets us perform many
+# different kinds of manipulations on the columns we select. If we wanted to calculate the ratio
+# between births and deaths for each country, we could divide the birth_rate column by the
+# death_rate column. Here's how we could do it:
+#   SELECT birth_rate / death_rate FROM facts;
+
+# Use a SQL query to compute the population of each country a year from now
+query = 'SELECT name, population, population * population_growth / 100.0 + population FROM facts ORDER BY population DESC LIMIT 10;'
+next_year_population = cur.execute(query).fetchall()
+print('Countries with largest populations and their expected population in 1 year:\n{}'.format(next_year_population))
