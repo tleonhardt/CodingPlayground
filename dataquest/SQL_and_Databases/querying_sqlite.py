@@ -74,16 +74,40 @@ cursor.execute(query)
 results = cursor.fetchall()
 
 # Display the first 3 results.
-print(results[0:2])
+print("First 3 rows:\n{}".format(results[0:3]))
 
 # Write a query that returns all of the values in the Major column
 query = "select Major from recent_grads;"
 cursor.execute(query)
 majors = cursor.fetchall()
-print(majors[0:3])
+print("First 3 majors:\n{}".format(majors[0:3]))
 
 
 ## Fetching A Specific Number Of Results
 # To make it easier to work with large results sets, the Cursor class allows you to control the
 # number of results you want to retrieve at any given time. To return a single result (as a tuple),
 # we use the Cursor method fetchone() and to return n results, we use the Cursor method fetchmany().
+
+# Write and run a query that returns the Major and Major_category columsn
+query = "select Major, Major_category from recent_grads;"
+cursor.execute(query)
+
+# Fetch the first 5 results
+five_results = cursor.fetchmany(5)
+print("First 5 results:\n{}".format(five_results))
+
+
+# Write and execute a query that returns the major names in reverse alphabetical order
+query = 'SELECT Major FROM recent_grads ORDER BY Major DESC LIMIT 5'
+cursor.execute(query)
+reverse_alphabetical = cursor.fetchall()
+print('Last 5 Majors (reverse alphabetical order):\n{}'.format(reverse_alphabetical))
+
+
+## Closing The Connection
+# Since SQLite restricts access to the database file when we're connected to a database, we need to
+# close the connection when we're done working with it. Closing the connection to the database allows
+# other processes to access the database, which is important when you're in a production environment
+# and working with other team members. In addition, if we made any changes to the database, they are
+# automatically saved and our changes are persisted in the database file upon closing.
+conn.close()
