@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 Example looking at answering a few interesting questions using the SQLite database from the CIA
 World Factbook:
