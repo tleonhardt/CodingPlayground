@@ -150,3 +150,29 @@ user_reviews.plot.scatter('IMDB_norm', 'Fandango_Ratingvalue', ax=ax3)
 plt.tight_layout()
 plt.show(fig)
 plt.close(fig)
+
+
+## Covariance
+# It seems like Rotten Tomatoes and IMDB user reviews correlate the most with Fandango user reviews
+# while Metacritic only weakly correlates
+
+# Calculate the covariance matrix
+cov_mat = user_reviews.cov()
+print('Covariance Matrix:\n{}'.format(cov_mat))
+
+# Extract individual covariance values
+rt_fg_covar = cov_mat['RT_user_norm']['Fandango_Ratingvalue']
+mc_fg_covar = cov_mat['Metacritic_user_nom']['Fandango_Ratingvalue']
+id_fg_covar = cov_mat['IMDB_norm']['Fandango_Ratingvalue']
+
+print("rt_fg_covar = {}".format(rt_fg_covar))
+print("mc_fg_covar = {}".format(mc_fg_covar))
+print("id_fg_covar = {}".format(id_fg_covar))
+
+
+## Correlation
+# Interestingly, Rotten Tomatoes covaries strongly with Fandango (0.36) compared to Metacritic (0.13)
+# and IMDB (0.14)
+
+corr_mat = user_reviews.corr()
+print('\nPearson correlation matrix:\n{}'.format(corr_mat))
