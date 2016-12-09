@@ -1,0 +1,5 @@
+help
+speak Hi there.
+say What's up?
+& -s Can you hear me?
+quit
