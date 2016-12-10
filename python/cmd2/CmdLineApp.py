@@ -10,6 +10,9 @@ class CmdLineApp(Cmd):
     maxrepeats = 3
     Cmd.settable.append('maxrepeats')
 
+    # Setting this true makes it run a shell command if a cmd2/cmd command doesn't exist
+    # default_to_shell = True
+
     @options([make_option('-p', '--piglatin', action="store_true", help="atinLay"),
               make_option('-s', '--shout', action="store_true", help="N00B EMULATION MODE"),
               make_option('-r', '--repeat', type="int", help="output [n] times")
