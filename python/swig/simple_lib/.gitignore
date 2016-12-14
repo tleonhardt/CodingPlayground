@@ -1,4 +1,6 @@
 libmylib.so
 mylib_wrap.cxx
+mylib_wrap.cpp
 mylib.py
 _mylib.so
+*.egg-info
