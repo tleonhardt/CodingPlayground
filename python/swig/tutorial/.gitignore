@@ -1,0 +1,4 @@
+example_wrap.c
+*.o
+example.py
+*.egg-info
