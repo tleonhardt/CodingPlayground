@@ -1,0 +1,4 @@
+libmylib.so
+mylib_wrap.cxx
+mylib.py
+_mylib.so
