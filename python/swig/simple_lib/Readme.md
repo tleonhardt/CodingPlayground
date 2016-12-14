@@ -1,3 +1,14 @@
+Building
+========
+
+Building Using distutils
+-------------------------
+python setup.py build_ext
+python setup.py install --install-platlib=.
+
+
+Building Manually
+-----------------
 Compile the shared library:
     g++ -fPIC -Wall -Wextra -shared mylib.cpp -o libmylib.so
 
@@ -16,8 +27,13 @@ Compile the Python module:
     g++ -fPIC -Wall -Wextra -shared mylib_wrap.cxx -o _mylib.so -L. -lmylib -I/home/todd/anaconda3/include/python3.5m -L/home/todd/anaconda3/lib -lpython3.5m
 
 
-Run:
-- Make sure the shared objects we just built are on the library path by setting LD_LIBRARY_PATH appropriately and then just run Python
+
+Testing
+=======
+
+Running Manually
+----------------
+Make sure the shared objects we just built are on the library path by setting LD_LIBRARY_PATH appropriately and then just run Python
 
     LD_LIBRARY_PATH=. ipython
 
@@ -46,3 +62,6 @@ Run:
     In [6]:
 
 
+Running with test.py
+--------------------
+python test.py
