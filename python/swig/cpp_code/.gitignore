@@ -1,5 +1,4 @@
 *.egg-info
-helloworld.i
 helloworld.py
 helloworld_wrap.cpp
 helloworld_wrap.cxx
