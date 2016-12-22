@@ -5,7 +5,6 @@ non-recursive fashion.
 cpdef int compute_fibonacchi_cython(int n):
     cdef int a, b, intermediate, x
     a, b = 1, 1
-    intermediate, x = 0, 0
     for x in range(n):
         intermediate = a
         a = a + b
