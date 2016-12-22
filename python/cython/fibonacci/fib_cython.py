@@ -1,8 +1,8 @@
 #!/usr/bin/env python
-""" Python wrapper to time the Cython implementation for computing the nth fibonacchi number
-in a non-recursive fashion.
+""" Python wrapper to time the Cython implementation for computing the nth fibonacci number
+in a non-recursive fashion and compare it to the pure Python implementation.
 """
-from fib import compute_fibonacchi_cython
+from fib import compute_fibonacci_cython
 
 if __name__ == '__main__':
     import sys
@@ -14,7 +14,7 @@ if __name__ == '__main__':
     except Exception:
         pass
 
-    fib_n = compute_fibonacchi_cython(n)
+    fib_n = compute_fibonacci_cython(n)
 
     number_of_times = 100000
     try:
@@ -22,8 +22,8 @@ if __name__ == '__main__':
     except Exception:
         pass
 
-    total_time = timeit.timeit("compute_fibonacchi_cython({})".format(n),
-                        setup="from fib import compute_fibonacchi_cython",
+    total_time = timeit.timeit("compute_fibonacci_cython({})".format(n),
+                        setup="from fib import compute_fibonacci_cython",
                         number=number_of_times)
     avg_time = total_time / number_of_times
     print("fib({0}) = {1}  [average execution time: {2:.2g} s]".format(n, fib_n, avg_time))

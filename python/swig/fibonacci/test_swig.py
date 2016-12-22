@@ -1,9 +1,9 @@
 #!/usr/bin/env python
-""" Python wrapper to time the Cython implementation for computing the nth fibonacci number
-in a non-recursive fashion.
+""" Python wrapper to time the SWIG wrapper for computing the nth fibonacci number
+in a non-recursive fashion and compare it to the pure Python implementation.
 """
-from fib_python import compute_fibonacci
-from fib import compute_fibonacci_cython
+import fibonacci
+import fib_python
 
 if __name__ == '__main__':
     import sys
@@ -21,21 +21,21 @@ if __name__ == '__main__':
     except Exception:
         pass
 
-    fib_py = compute_fibonacci(n)
-    fib_cy = compute_fibonacci_cython(n)
-    if fib_py != fib_cy:
-        raise(ValueError(fib_cy))
+    fib_py = fib_python.compute_fibonacci(n)
+    fib_swig = fibonacci.compute_fibonacci(n)
+    if fib_py != fib_swig:
+        raise(ValueError(fib_swig))
 
     py_tot = timeit.timeit("compute_fibonacci({})".format(n),
                            setup="from fib_python import compute_fibonacci",
                            number=number_of_times)
-    cy_tot = timeit.timeit("compute_fibonacci_cython({})".format(n),
-                           setup="from fib import compute_fibonacci_cython",
+    swig_tot = timeit.timeit("compute_fibonacci({})".format(n),
+                           setup="from fibonacci import compute_fibonacci",
                            number=number_of_times)
     py_avg = py_tot / number_of_times
-    cy_avg = cy_tot / number_of_times
+    swig_avg = swig_tot / number_of_times
 
     print("fib({}) = {}".format(n, fib_py))
     print("Python average time:  {0:.2g}".format(py_avg))
-    print("Cython average time:  {0:.2g}".format(cy_avg))
-    print("Cython speedup: {0:.2g} times".format(py_avg/cy_avg))
+    print("SWIG/C average time:  {0:.2g}".format(swig_avg))
+    print("SWIG/C speedup: {0:.2g} times".format(py_avg/swig_avg))
