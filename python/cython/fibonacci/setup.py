@@ -1,8 +1,10 @@
-from distutils.core import setup, Extension
+from distutils.core import setup
 from Cython.Build import cythonize
-from Cython.Distutils import build_ext
+import Cython.Compiler.Options
+
+Cython.Compiler.Options.annotate = True
 
 setup(
-    ext_modules=[Extension('fib', ['fib.pyx'])],
-    cmdclass={'build_ext': build_ext} 
+    name = "fib",
+    ext_modules = cythonize('fib.pyx', compiler_directives={'boundscheck': True}),
 )
