@@ -6,5 +6,5 @@ Cython.Compiler.Options.annotate = True
 
 setup(
     name = "fib",
-    ext_modules = cythonize('fib.pyx', compiler_directives={'boundscheck': True}),
+    ext_modules = cythonize('fib.pyx', compiler_directives={'embedsignature': True}),
 )
