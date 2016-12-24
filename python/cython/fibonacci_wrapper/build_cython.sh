@@ -1,0 +1,1 @@
+cythonize -b cyfib.pyx
