@@ -1,10 +1,19 @@
 #!/usr/bin/env python
-'''A sample application for cmd2.'''
+# coding=utf-8
+"""A sample application for cmd2.
 
-from cmd2 import Cmd, make_option, options, Cmd2TestCase
-import unittest, optparse, sys
+Thanks to cmd2's built-in transtript testing capability, it also serves as a test suite for example.py when used with
+ the exampleSession.txt transcript.
+
+Running `python example.py -t exampleSession.txt` will run all the commands in the transcript against example.py,
+verifying that the output produced matches the transcript.
+"""
+
+from cmd2 import Cmd, make_option, options
+
 
 class CmdLineApp(Cmd):
+    """ Example cmd2 application. """
     multilineCommands = ['orate']
     Cmd.shortcuts.update({'&': 'speak'})
     maxrepeats = 3
@@ -16,7 +25,7 @@ class CmdLineApp(Cmd):
     @options([make_option('-p', '--piglatin', action="store_true", help="atinLay"),
               make_option('-s', '--shout', action="store_true", help="N00B EMULATION MODE"),
               make_option('-r', '--repeat', type="int", help="output [n] times")
-             ])
+              ])
     def do_speak(self, arg, opts=None):
         """Repeats what you tell me to."""
         arg = ''.join(arg)
@@ -31,19 +40,10 @@ class CmdLineApp(Cmd):
             # self.stdout.write is better than "print", because Cmd can be
             # initialized with a non-standard output destination
 
-    do_say = do_speak     # now "say" is a synonym for "speak"
-    do_orate = do_speak   # another synonym, but this one takes multi-line input
+    do_say = do_speak  # now "say" is a synonym for "speak"
+    do_orate = do_speak  # another synonym, but this one takes multi-line input
 
-class TestMyAppCase(Cmd2TestCase):
-    CmdApp = CmdLineApp
-    transcriptFileName = 'exampleSession.txt'
 
-parser = optparse.OptionParser()
-parser.add_option('-t', '--test', dest='unittests', action='store_true', default=False, help='Run unit test suite')
-(callopts, callargs) = parser.parse_args()
-if callopts.unittests:
-    sys.argv = [sys.argv[0]]  # the --test argument upsets unittest.main()
-    unittest.main()
-else:
-    app = CmdLineApp()
-    app.cmdloop()
+if __name__ == '__main__':
+    c = CmdLineApp()
+    c.cmdloop()

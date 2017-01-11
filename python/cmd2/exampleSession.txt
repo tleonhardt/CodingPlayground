@@ -2,12 +2,13 @@
 
 Documented commands (type help <topic>):
 ========================================
-_load  edit  history  li    load   pause  run   say  shell      show
-ed     hi    l        list  orate  r      save  set  shortcuts  speak
+_load           ed    history  list   pause  run   set        show
+_relative_load  edit  l        load   py     save  shell      speak
+cmdenvironment  hi    li       orate  r      say   shortcuts
 
 Undocumented commands:
 ======================
-EOF  cmdenvironment  eof  exit  help  q  quit
+EOF  eof  exit  help  q  quit
 
 (Cmd) help say
 Repeats what you tell me to.
@@ -27,10 +28,19 @@ OODNIGHT, GRACIEGAY
 OODNIGHT, GRACIEGAY
 OODNIGHT, GRACIEGAY
 (Cmd) set
-prompt: (Cmd)
-editor: gedit
+abbrev: True
+case_insensitive: True
+colors: True
+continuation_prompt: >
+debug: False
+default_file_name: command.txt
 echo: False
+editor: gedit
+feedback_to_output: False
 maxrepeats: 3
+prompt: (Cmd)
+quiet: False
+timing: False
 (Cmd) set maxrepeats 5
 maxrepeats - was: 3
 now: 5
@@ -57,6 +67,7 @@ set maxrepeats 5
 say -ps --repeat=5 goodnight, Gracie
 (Cmd) run 4
 say -ps --repeat=5 goodnight, Gracie
+
 OODNIGHT, GRACIEGAY
 OODNIGHT, GRACIEGAY
 OODNIGHT, GRACIEGAY
@@ -66,9 +77,10 @@ OODNIGHT, GRACIEGAY
 > seven releases ago
 > our BDFL
 > blah blah blah
->
->
-Four score and seven releases ago our BDFL blah blah blah
+Four score and
+seven releases ago
+our BDFL
+blah blah blah
 (Cmd) & look, a shortcut!
 look, a shortcut!
 (Cmd) set prompt "---> "
