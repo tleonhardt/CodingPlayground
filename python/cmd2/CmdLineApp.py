@@ -14,6 +14,10 @@ from cmd2 import Cmd, make_option, options
 
 class CmdLineApp(Cmd):
     """ Example cmd2 application. """
+    # Build-in Cmd attributes
+    intro = 'Welcome to the NP shell.   Type help or ? to list commands.\n'
+    prompt = '(NP) '
+
     multilineCommands = ['orate']
     Cmd.shortcuts.update({'&': 'speak'})
     maxrepeats = 3
