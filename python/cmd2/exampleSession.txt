@@ -1,4 +1,4 @@
-(Cmd) help
+(NP) help
 
 Documented commands (type help <topic>):
 ========================================
@@ -10,7 +10,7 @@ Undocumented commands:
 ======================
 EOF  eof  exit  help  q  quit
 
-(Cmd) help say
+(NP) help say
 Repeats what you tell me to.
 Usage: speak [options] arg
 
@@ -21,13 +21,13 @@ Options:
   -r REPEAT, --repeat=REPEAT
                         output [n] times
 
-(Cmd) say goodnight, Gracie
+(NP) say goodnight, Gracie
 goodnight, Gracie
-(Cmd) say -ps --repeat=5 goodnight, Gracie
+(NP) say -ps --repeat=5 goodnight, Gracie
 OODNIGHT, GRACIEGAY
 OODNIGHT, GRACIEGAY
 OODNIGHT, GRACIEGAY
-(Cmd) set
+(NP) set
 abbrev: True
 case_insensitive: True
 colors: True
@@ -38,19 +38,19 @@ echo: False
 editor: vim
 feedback_to_output: False
 maxrepeats: 3
-prompt: (Cmd)
+prompt: (NP)
 quiet: False
 timing: False
-(Cmd) set maxrepeats 5
+(NP) set maxrepeats 5
 maxrepeats - was: 3
 now: 5
-(Cmd) say -ps --repeat=5 goodnight, Gracie
+(NP) say -ps --repeat=5 goodnight, Gracie
 OODNIGHT, GRACIEGAY
 OODNIGHT, GRACIEGAY
 OODNIGHT, GRACIEGAY
 OODNIGHT, GRACIEGAY
 OODNIGHT, GRACIEGAY
-(Cmd) hi
+(NP) hi
 -------------------------[1]
 help
 -------------------------[2]
@@ -65,7 +65,7 @@ set
 set maxrepeats 5
 -------------------------[7]
 say -ps --repeat=5 goodnight, Gracie
-(Cmd) run 4
+(NP) run 4
 say -ps --repeat=5 goodnight, Gracie
 
 OODNIGHT, GRACIEGAY
@@ -73,7 +73,7 @@ OODNIGHT, GRACIEGAY
 OODNIGHT, GRACIEGAY
 OODNIGHT, GRACIEGAY
 OODNIGHT, GRACIEGAY
-(Cmd) orate Four score and
+(NP) orate Four score and
 > seven releases ago
 > our BDFL
 > blah blah blah
@@ -81,10 +81,10 @@ Four score and
 seven releases ago
 our BDFL
 blah blah blah
-(Cmd) & look, a shortcut!
+(NP) & look, a shortcut!
 look, a shortcut!
-(Cmd) set prompt "---> "
-prompt - was: (Cmd)
+(NP) set prompt "---> "
+prompt - was: (NP)
 now: --->
 ---> say goodbye
 goodbye
