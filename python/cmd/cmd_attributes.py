@@ -21,6 +21,7 @@ class HelloWorld(cmd.Cmd):
         """greet [person]
         Greet the named person"""
         if person:
+            print("type(arg) = {},  arg={}".format(type(person), person))
             print("hi, {}".format(person))
         else:
             print('hi')

@@ -47,6 +47,27 @@ class CmdLineApp(Cmd):
     do_say = do_speak  # now "say" is a synonym for "speak"
     do_orate = do_speak  # another synonym, but this one takes multi-line input
 
+    def do_greet(self, person):
+        """greet [person]
+        Greet the named person"""
+        if person:
+            print("type(arg) = {},  arg={},  arg.split()={}".format(type(person), person,
+                                                                    person.split()))
+            print("hi, {}".format(person))
+        else:
+            print('hi')
+
+    @options([make_option('-d', '--depth', type="int", help="depth")],
+              arg_desc='test_args')
+    def do_test(self, arg, opts=None):
+        """ Prints out information about the arguments you give it. """
+        if arg:
+            print("type(arg) = {},  arg={},  arg.split()={}".format(type(arg), arg, arg.split()))
+            arg_join = ''.join(arg)
+            print("''.join(arg) = {}".format(arg_join))
+        else:
+            print('No arg')
+
 
 if __name__ == '__main__':
     c = CmdLineApp()
