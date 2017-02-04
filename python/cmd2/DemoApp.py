@@ -25,5 +25,15 @@ class DemoApp(Cmd):
         else:
             print("No argument provided")
 
+    @options([make_option('-d', '--depth',  type="int", help="output [n] times")],
+             arg_desc="[directory]")
+    def do_dir(self, path, opts):
+        """ Get a directory listing. """
+        recursion_depth = 0
+        if opts.depth:
+            recursion_depth = opts.depth
+
+        self.stdout.write('path = {}\n'.format(path))
+
 if __name__ == '__main__':
     DemoApp().cmdloop()
