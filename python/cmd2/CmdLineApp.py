@@ -69,6 +69,15 @@ class CmdLineApp(Cmd):
             print('No arg')
 
 
+    # Get rid of commands or command aliases we don't want
+    del Cmd.do__load
+    del Cmd.do_edit
+    del Cmd.do_hi
+    del Cmd.do_l
+    del Cmd.do_li
+    del Cmd.do_r
+
+
 if __name__ == '__main__':
     c = CmdLineApp()
     c.cmdloop()
