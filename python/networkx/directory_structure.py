@@ -66,3 +66,18 @@ for edge in bfs_edges:
 # Other breadth-first options
 # bfs_tree = nx.bfs_tree(G, root_name)
 # bfs_successors = nx.bfs_successors(G, root_name)
+
+# You can also save the graph in several formats including JSON, YAML, and GraphML (an XML format)
+
+# Save in GraphML
+nx.write_graphml(G, 'graph.graphml')
+
+# Save in YAML
+nx.write_yaml(G, 'graph.yaml')
+
+# JSON - each node is a dict containing an "id" key and a "children" key pointing to a list of nodes
+from networkx.readwrite import json_graph
+data = json_graph.tree_data(G,root='cffi')
+import json
+with open('data.json', 'w') as outfile:
+    json.dump(data, outfile, sort_keys = True, indent = 4, ensure_ascii=False)
