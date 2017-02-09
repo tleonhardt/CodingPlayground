@@ -6,10 +6,6 @@ import os
 import sys
 
 import networkx as nx
-import matplotlib
-matplotlib.rcParams['backend'] = "Qt5Agg"
-import matplotlib.pyplot as plt
-
 
 # Create an empty directed graph
 G = nx.DiGraph()
