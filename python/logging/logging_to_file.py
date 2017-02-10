@@ -26,7 +26,7 @@ else:
 # Note the "8s" right-justifies the levelname in an 8-char wide field.  For left justification, use "-8s" instead.
 LOG_FORMAT = '%(asctime)s.%(msecs)03d - %(levelname)8s: %(message)s'
 
-# The default time format uses a comma to separate subseconds.  We fix that and print with a "." with ms resolution.
+# ISO8601 date/time format (but we use period for subseconds instead of comma)
 DATE_FORMAT = '%Y-%m-%d,%H:%M:%S'
 
 logging.basicConfig(filename=LOG_FILE, filemode=mode, level=LOG_LEVEL, format=LOG_FORMAT, datefmt=DATE_FORMAT)
