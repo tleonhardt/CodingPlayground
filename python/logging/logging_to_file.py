@@ -4,9 +4,9 @@
 This is a simple example of using Python's logging module to log to a file.
 
 Expected output (to file 'example.log' in same directory as script is run):
-    DEBUG:root:This message should go to the log file
-    INFO:root:So should this
-    WARNING:root:And this, too
+    2017-02-10,11:10:40.069 -    DEBUG: This message should go to the log file
+    2017-02-10,11:10:40.069 -     INFO: So should this
+    2017-02-10,11:10:40.069 -  WARNING: Look before you leap!
 
 This example also shows how you can set the logging level which acts as the threshold for tracking.
 In this case, because we set the threshold to DEBUG, all of the messages were printed.
