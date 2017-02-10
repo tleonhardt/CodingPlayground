@@ -24,9 +24,12 @@ else:
     mode = 'w'
 
 # Note the "8s" right-justifies the levelname in an 8-char wide field.  For left justification, use "-8s" instead.
-LOG_FORMAT = '%(asctime)s - %(levelname)8s: %(message)s'
+LOG_FORMAT = '%(asctime)s.%(msecs)03d - %(levelname)8s: %(message)s'
 
-logging.basicConfig(filename=LOG_FILE, filemode=mode, format=LOG_FORMAT, level=LOG_LEVEL)
+# The default time format uses a comma to separate subseconds.  We fix that and print with a "." with ms resolution.
+DATE_FORMAT = '%Y-%m-%d,%H:%M:%S'
+
+logging.basicConfig(filename=LOG_FILE, filemode=mode, level=LOG_LEVEL, format=LOG_FORMAT, datefmt=DATE_FORMAT)
 logging.debug('This message should go to the log file')
 logging.info('So should this')
 logging.warning('{} before you {}'.format('Look', 'leap!'))
