@@ -13,7 +13,7 @@ mpl.rcParams['legend.fontsize'] = 10
 # Create a new figure
 fig = plt.figure()
 
-# An Axes3D object is created just like any other axes using the projection=‘3d’ keyword
+# An Axes3D object is created just like any other axes using the projection='3d' keyword
 ax = fig.add_subplot(111, projection='3d')
 # NOTE: For older versions of matplotlib prior to 1.0.0, use this syntax:
 # ax = Axes3D(fig)
