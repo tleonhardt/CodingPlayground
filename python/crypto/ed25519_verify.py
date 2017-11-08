@@ -24,9 +24,6 @@ if __name__ == '__main__':
     msg_filename = sys.argv[2]
     sig_filename = sys.argv[3]
 
-    # The first step is to create a signing key and store it. The safest way to generate a key is with create_keypair()
-    signing_key, verifying_key = ed25519.create_keypair()   # Generates a 32 byte SigningKey and 32 byte VerifyingKey
-
     # Open the private key to a file and read data for both the private Signing key and public Verifying key
     with open(key_filename, 'rb') as key_file:
         keydata = key_file.read()
