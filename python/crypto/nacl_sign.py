@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding=utf-8
 """
 Uses PyNaCl to sign a message using ed25519 digital signature algorithm
@@ -7,7 +7,7 @@ import sys
 
 import colorama
 from colorama import Fore
-from nacl.encoding import HexEncoder
+from nacl.encoding import HexEncoder, RawEncoder
 from nacl.signing import SigningKey
 
 
@@ -25,18 +25,16 @@ if __name__ == '__main__':
     input_filename = sys.argv[2]
     output_filename = sys.argv[3]
 
-    # Open the private key to a file and read data for both the private Signing key and public Verifying key
+    # Open the private key file and read in the signing key bytes
     with open(key_filename, 'rb') as key_file:
-        keydata_hex = key_file.read()
-
-    # Specify an NaCL encoder
-    nacl_encoder = HexEncoder
+        keydata_bytes = key_file.read()
 
     # Reconstruct the SigningKey instance from the serialized form
-    signing_key = SigningKey(keydata_hex, encoder=nacl_encoder)
+    signing_key = SigningKey(keydata_bytes, encoder=RawEncoder)
 
     # Print out the private Signing key
-    print(Fore.LIGHTBLUE_EX + 'the private key is {}'.format(keydata_hex))
+    signing_hex = signing_key.encode(encoder=HexEncoder)
+    print(Fore.LIGHTBLUE_EX + 'the private key is {}'.format(signing_hex))
 
     # Open the input file and read its data in as a message that we wish to sign
     with open(input_filename, 'rb') as msg_file:
