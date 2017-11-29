@@ -30,6 +30,7 @@ if __name__ == '__main__':
 
     assert data == decompressed
 
+    print("Zstandard compression ratio: {0:.3g}".format(len(data) / len(compressed)))
     print("Uncompressed data (length {}): {!r}".format(len(data), data))
     print("Compressed   data (length {}): {!r}".format(len(compressed), compressed))
     print("Decompressed data (length {}): {!r}".format(len(decompressed), decompressed))
