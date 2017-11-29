@@ -88,4 +88,8 @@ ENV/
 # Rope project settings
 .ropeproject
 
+# IntelliJ IDEs
 .idea
+
+# CLion
+cmake-build-debug
