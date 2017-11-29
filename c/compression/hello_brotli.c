@@ -1,10 +1,10 @@
 /*
  * Simple example of using Brotli C library for round-trip compress/decompress
  */
-#include <stdlib.h>    // malloc, free, exit
+#include <stdint.h>     // uint8_t. etc.
 #include <stdio.h>     // fprintf, perror, fopen, etc.
+#include <stdlib.h>    // malloc, free, exit
 #include <string.h>    // strlen, strcat, memset, strerror
-#include <errno.h>     // errno
 
 // presumes Brotli library (with headers) is installed
 #include <brotli/encode.h>
@@ -30,10 +30,10 @@ int main(int argc, const char** argv)
         return 1;
     }
 
-    const char* const data = argv[1];
+    const uint8_t* const data = (uint8_t*)argv[1];
 
     // Get the size of the data we wish to compress
-    size_t fSize = strlen(data);
+    size_t fSize = strlen(argv[1]);
 
     // Calculate upper bound for size of compressed data
     size_t const cBuffSize = BrotliEncoderMaxCompressedSize(fSize);
@@ -51,7 +51,7 @@ int main(int argc, const char** argv)
     BROTLI_BOOL success = BrotliEncoderCompress(quality, lgwin, mode, fSize, data, &encoded_size, cBuff);
     if (success != BROTLI_TRUE || encoded_size == 0)
     {
-        printf(stderr, "error compressing '%s'\n", data);
+        fprintf(stderr, "error compressing '%s'\n", data);
         exit(8);
     }
 
@@ -64,7 +64,7 @@ int main(int argc, const char** argv)
 
     // Performs one-shot memory-to-memory decompression
     size_t decoded_size = rSize;
-    BrotliDecoderResult result = BrotliDecoderDecompress(encoded_size, cBuff, decoded_size, rBuff);
+    BrotliDecoderResult result = BrotliDecoderDecompress(encoded_size, cBuff, &decoded_size, rBuff);
     if (BROTLI_DECODER_RESULT_SUCCESS != result)
     {
         fprintf(stderr, "error decompressing\n");

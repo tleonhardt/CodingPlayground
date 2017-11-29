@@ -13,7 +13,7 @@ link_directories(.)
 
 # Libraries
 set(zstd zstd)
-set(brotli brotli)
+set(brotli brotlienc brotlidec)
 
 # Files to build for each executable
 set(HELLO_ZSTD_SRC hello_zstandard.c)
