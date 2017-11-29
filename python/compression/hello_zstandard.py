@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding=utf-8
 """
 Uses python-zstandard wrapper around zstandard C library (simplest usage of API for round-trip compress/decompress)
