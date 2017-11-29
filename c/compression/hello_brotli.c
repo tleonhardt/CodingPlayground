@@ -30,41 +30,52 @@ int main(int argc, const char** argv)
         return 1;
     }
 
-    const uint8_t* const data = (uint8_t*)argv[1];
+    const uint8_t* const input_buffer = (uint8_t*)argv[1];
 
-    // Get the size of the data we wish to compress
-    size_t fSize = strlen(argv[1]);
+    // Get the size of the input_buffer we wish to compress
+    size_t input_size = strlen(argv[1]);
 
-    // Calculate upper bound for size of compressed data
-    size_t const cBuffSize = BrotliEncoderMaxCompressedSize(fSize);
+    // Calculate upper bound for size of compressed data given the size of the uncompressed input_buffer
+    size_t const maxCompressedSize = BrotliEncoderMaxCompressedSize(input_size);
 
     // Allocate a buffer to hold the compressed data
-    void* const cBuff = malloc_orDie(cBuffSize);
+    void* const encoded_buffer = malloc_orDie(maxCompressedSize);
 
-    // Compress the data
+
+
+    // The higher the quality, the slower the compression (and higher compression ratio). Range is from 0 to 11
     int quality = BROTLI_DEFAULT_QUALITY;
+
+    // Recommended sliding LZ77 window size. Encoder may reduce this value.  Range is from 10 to 24 bits.
     int lgwin = BROTLI_DEFAULT_WINDOW;
+
+    // Compression mode.  Options are: BROTLI_MODE_GENERIC, BROTLI_MODE_TEXT (UTF-8 formatted text), or BROTLI_MODE_FONT
     BrotliEncoderMode mode = BROTLI_DEFAULT_MODE;
-    size_t encoded_size = cBuffSize;
+
+    // in: size of @p encoded_buffer;  out: length of compressed data written to  encoded_buffer
+    size_t encoded_size = maxCompressedSize;
 
     // Performs one-shot memory-to-memory compression
-    BROTLI_BOOL success = BrotliEncoderCompress(quality, lgwin, mode, fSize, data, &encoded_size, cBuff);
+    BROTLI_BOOL success = BrotliEncoderCompress(quality, lgwin, mode, input_size, input_buffer, &encoded_size,
+                                                encoded_buffer);
     if (success != BROTLI_TRUE || encoded_size == 0)
     {
-        fprintf(stderr, "error compressing '%s'\n", data);
+        fprintf(stderr, "error compressing '%s'\n", input_buffer);
         exit(8);
     }
 
 
-    // Calculate the size for the decompressed data
-    size_t rSize = fSize;
+    // TODO: Calculate the size for the decompressed data in a general way
+    size_t maxDecompressedSize = input_size;
 
     // Allocate a buffer for the reconstructed data
-    void* const rBuff = malloc_orDie(rSize);
+    void* const decoded_buffer = malloc_orDie(maxDecompressedSize);
+
+    // in: size of @p decoded_buffer;  out: length of decompressed data written to decoded_buffer
+    size_t decoded_size = maxDecompressedSize;
 
     // Performs one-shot memory-to-memory decompression
-    size_t decoded_size = rSize;
-    BrotliDecoderResult result = BrotliDecoderDecompress(encoded_size, cBuff, &decoded_size, rBuff);
+    BrotliDecoderResult result = BrotliDecoderDecompress(encoded_size, encoded_buffer, &decoded_size, decoded_buffer);
     if (BROTLI_DECODER_RESULT_SUCCESS != result)
     {
         fprintf(stderr, "error decompressing\n");
@@ -73,7 +84,7 @@ int main(int argc, const char** argv)
 
     printf("Brotli compression ratio: %.3g\n", ((float)decoded_size)/encoded_size);
 
-    free(cBuff);
-    free(rBuff);
+    free(encoded_buffer);
+    free(decoded_buffer);
     return 0;
 }
