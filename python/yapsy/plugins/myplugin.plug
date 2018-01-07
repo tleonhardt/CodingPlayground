@@ -1,0 +1,9 @@
+[Core]
+Name = My plugin Name
+Module = myplugin
+
+[Documentation]
+Description = What my plugin broadly does
+Author = My very own name
+Version = the_version_number_of_the_plugin
+Website = My very own website
