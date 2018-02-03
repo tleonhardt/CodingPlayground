@@ -26,13 +26,35 @@ class User(Base):
     details about the table to which we’ll be mapping, primarily the table name, and names and datatypes of columns.
     """
     __tablename__ = 'users'
-    id = sa.Column(sa.Integer, primary_key=True)
-    name = sa.Column(sa.String)
-    fullname = sa.Column(sa.String)
-    password = sa.Column(sa.String)
+    id = sa.Column(sa.Integer, primary_key=True, nullable=False, autoincrement=True)
+    name = sa.Column(sa.String(50), nullable=False)
+    fullname = sa.Column(sa.String(80), unique=True)
+    password = sa.Column(sa.String(30))
 
     def __repr__(self):
         return "<User(name='%s', fullname='%s', password='%s')>" % (self.name, self.fullname, self.password)
+
+
+class Address(Base):
+    """Let’s consider how a second table, related to User, can be mapped and queried.
+
+    Users in our system can store any number of email addresses associated with their username. This implies a basic one
+    to many association from the users to a new table which stores email addresses, which we will call addresses.
+    """
+    __tablename__ = 'addresses'
+    id = sa.Column(sa.Integer, primary_key=True)
+    email_address = sa.Column(sa.String(60), nullable=False)
+    # ForeignKey construct is a directive that constrains values in this column to be present in the named remote column
+    user_id = sa.Column(sa.Integer, sa.ForeignKey('users.id'))
+
+    user = sa_orm.relationship("User", back_populates="addresses")
+
+    def __repr__(self):
+        return "<Address(email_address='%s')>" % self.email_address
+
+
+# Users in our system can store any number of email addresses associated with their username
+User.addresses = sa_orm.relationship("Address", order_by=Address.id, back_populates="user")
 
 
 if __name__ == '__main__':
@@ -65,19 +87,24 @@ if __name__ == '__main__':
     # Create a session
     session = Session()
 
+    # Configure details for a user
+    user_name = 'todd'
+    full_name = 'Todd Leonhardt'
+    password = 'password'
+
     # Query users table to see if ed already exists
-    existing_user = session.query(User).filter_by(name='ed').first()
+    existing_user = session.query(User).filter_by(name=user_name).first()
 
     if existing_user is None:
         # Add an object to the database
-        ed_user = User(name='ed', fullname='Ed Jones', password='edspassword')
-        session.add(ed_user)
+        new_user = User(name=user_name, fullname=full_name, password=password)
+        session.add(new_user)
         session.commit()
 
         # Query user
-        our_user = session.query(User).filter_by(name='ed').first()
-        assert our_user is ed_user
-        print('User added to the database: {!r}'.format(ed_user))
+        our_user = session.query(User).filter_by(name=user_name).first()
+        assert our_user is new_user
+        print('User added to the database: {!r}'.format(new_user))
     else:
         print('User already exists in the database: {!r}'.format(existing_user))
 
