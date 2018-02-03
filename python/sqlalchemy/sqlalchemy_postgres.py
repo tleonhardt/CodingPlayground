@@ -1,8 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding=utf-8
 """This is a simple example of using SQLAlchemy in ORM mode to work with a PostgreSQL database.
 """
 import getpass
+import sys
 
 import colorama
 from colorama import Fore
@@ -74,6 +75,8 @@ if __name__ == '__main__':
 
     # # WARNING: This database must already exist in the PostgreSQL server.  It may or may not contain any tables.
     database = 'sample_db'
+    if len(sys.argv) > 1:
+        database = sys.argv[1]
 
     # Use a SQLite database stored in the 'foo.db' file (set echo to True for SQLAlchemy debug output)
     engine = sa.create_engine('postgresql://{}:{}@{}/{}'.format(db_user, db_pass, host, database), echo=False)
