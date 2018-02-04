@@ -10,6 +10,7 @@ from colorama import Fore
 import sqlalchemy as sa
 import sqlalchemy.ext.declarative as sa_decl
 import sqlalchemy.orm as sa_orm
+import sqlalchemy_utils as sa_utils
 
 # Classes mapped using the Declarative system are defined in terms of a base class which maintains a catalog of
 # classes and tables relative to that base - this is known as the declarative base class
@@ -78,10 +79,33 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         database = sys.argv[1]
 
-    # Use a SQLite database stored in the 'foo.db' file (set echo to True for SQLAlchemy debug output)
-    engine = sa.create_engine('postgresql://{}:{}@{}/{}'.format(db_user, db_pass, host, database), echo=False)
+    #  The string form of the URL is ``dialect[+driver]://user:password@host:port/dbname[?key=value..]``
+    db_url = 'postgresql://{}:{}@{}/{}'.format(db_user, db_pass, host, database)
 
-    # Create the schema - make sure the table exists
+    # Check to see if the database exists
+    validate_shema = False
+    if sa_utils.database_exists(db_url):
+        # Warn the user that the DB exists and ask if they would like to delete it and recreate it or move on?
+        print(Fore.YELLOW + 'Database {!r} already exists'.format(database))
+        recreate = input('Would you like to delete database {!r} and recreate it from scratch (y/n)? ')
+        if recreate.lower().startswith('y'):
+            # Issue the appropriate DROP DATABASE statement to delete the database
+            sa_utils.drop_database(db_url)
+            # Issue the appropriate CREATE DATABASE statement to recreate an empty database
+            sa_utils.create_database(db_url)
+        else:
+            print('You elected not to recreate database {!r}, the schema will be validated ...'.format(db_url))
+            validate_shema = True
+    else:
+        # Create the database from scratch
+        print(Fore.YELLOW + 'Database {!r} does not exist, so creating it ...'.format(database))
+        # Issue the appropriate CREATE DATABASE statement to create an empty database
+        sa_utils.create_database(db_url)
+
+    # Use a SQLite database stored in the 'foo.db' file (set echo to True for SQLAlchemy debug output)
+    engine = sa.create_engine(db_url, echo=False)
+
+    # Create the schema - make sure the tables exist
     Base.metadata.create_all(engine)
 
     # Connect the engine to the Session factory
@@ -89,6 +113,10 @@ if __name__ == '__main__':
 
     # Create a session
     session = Session()
+
+    # Validate the schema if the database already existed and the user opted not to recreate it from scratch
+    if validate_shema:
+        # TODO: Validate the schema
 
     # Configure details for a user
     user_name = 'todd'
