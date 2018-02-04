@@ -11,6 +11,8 @@ from colorama import Fore
 import sqlalchemy as sa                         # SQLAlchemy
 import sqlalchemy.exc as sa_exc                 # SQLAlchemy Exceptions
 import sqlalchemy.ext.declarative as sa_decl    # SQLAlchemy Declarative
+# noinspection PyProtectedMember
+from sqlalchemy.ext.declarative.clsregistry import _ModuleMarker
 import sqlalchemy.orm as sa_orm                 # SQLAlchemy ORM
 import sqlalchemy_utils as sa_utils
 
@@ -67,10 +69,10 @@ User.addresses = sa_orm.relationship("Address", order_by=Address.id, back_popula
 def check_db_schema(declarative_base, sa_session):
     """Check whether the current database matches the models declared in model base.
 
-    Checks to make sure all tables exist and that each table contains columns with the expected name.
+    Checks to make sure all tables exist and that each table contains columns with the expected names.
 
     What is not checked:
-    * Column types are not verified
+    * Column types are not verified (TODO)
     * Relationships are not verified at all (TODO)
 
     :param declarative_base: Declarative Base for SQLAlchemy models to check
@@ -79,23 +81,21 @@ def check_db_schema(declarative_base, sa_session):
     """
     sa_engine = sa_session.get_bind()
     iengine = sa.inspect(sa_engine)
-
+    tables = iengine.get_table_names()
     errors = False
 
-    tables = iengine.get_table_names()
-
     # Go through all SQLAlchemy models
+    # noinspection PyProtectedMember
     for name, klass in declarative_base._decl_class_registry.items():
-
-        if isinstance(klass, sa_decl._ModuleMarker):
+        if isinstance(klass, _ModuleMarker):
             # Not a model
             continue
 
         table = klass.__tablename__
         if table in tables:
             # Check all columns are found
-            # Looks like [{'default': "nextval('sanity_check_test_id_seq'::regclass)", 'autoincrement': True, 'nullable': False, 'type': INTEGER(), 'name': 'id'}]
-
+            # Looks like [{'default': "nextval('sanity_check_test_id_seq'::regclass)", 'autoincrement': True,
+            #              'nullable': False, 'type': INTEGER(), 'name': 'id'}]
             columns = [c["name"] for c in iengine.get_columns(table)]
             mapper = sa.inspect(klass)
 
@@ -106,9 +106,13 @@ def check_db_schema(declarative_base, sa_session):
                 else:
                     for column in column_prop.columns:
                         # Assume normal flat column
-                        if not column.key in columns:
-                            logger.error("Model %s declares column %s which does not exist in database %s", klass, column.key, sa_engine)
+                        if column.key not in columns:
+                            logger.error("Model %s declares column %s which does not exist in database %s", klass,
+                                         column.key, sa_engine)
                             errors = True
+                        else:
+                            # TODO: Add sanity checks for column types
+                            pass
         else:
             logger.error("Model %s declares table %s which does not exist in database %s", klass, table, sa_engine)
             errors = True
@@ -153,16 +157,15 @@ if __name__ == '__main__':
         print(Fore.YELLOW + 'Database {!r} already exists'.format(database))
         recreate = input('Would you like to delete database {!r} and recreate it from scratch (y/n)? ')
         if recreate.lower().startswith('y'):
-            # Issue the appropriate DROP DATABASE statement to delete the database
             sa_utils.drop_database(db_url)
-            # Issue the appropriate CREATE DATABASE statement to recreate an empty database
             sa_utils.create_database(db_url)
+            print(Fore.LIGHTGREEN_EX + 'Database {!r} deleted and recreated from scratch ....'.format(database))
         else:
             print('You elected not to recreate database {!r}, the schema will be validated ...'.format(db_url))
             validate_shema = True
     else:
         # Create the database from scratch
-        print(Fore.YELLOW + 'Database {!r} does not exist, so creating it ...'.format(database))
+        print(Fore.LIGHTGREEN_EX + 'Database {!r} does not exist, so creating it ...'.format(database))
         # Issue the appropriate CREATE DATABASE statement to create an empty database
         sa_utils.create_database(db_url)
 
@@ -180,12 +183,11 @@ if __name__ == '__main__':
 
     # Validate the schema if the database already existed and the user opted not to recreate it from scratch
     if validate_shema:
-        pass
-        # if check_db_schema(Base, session):
-        #     print(Fore.LIGHTGREEN_EX + 'Existing DB schema looks OK')
-        # else:
-        #     print(Fore.RED + 'Existing DB schema conflicts with expected schema, database needs to be recreated')
-        #     sys.exit(2)
+        if check_db_schema(Base, session):
+            print(Fore.LIGHTGREEN_EX + 'Existing DB schema looks OK')
+        else:
+            print(Fore.RED + 'Existing DB schema conflicts with expected schema, database needs to be recreated')
+            sys.exit(2)
 
     # Configure details for a user
     user_name = 'todd'
