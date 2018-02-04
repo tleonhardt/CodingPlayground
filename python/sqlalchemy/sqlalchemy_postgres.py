@@ -107,14 +107,15 @@ def check_db_schema(declarative_base, sa_session):
                     for column in column_prop.columns:
                         # Assume normal flat column
                         if column.key not in columns:
-                            logger.error("Model %s declares column %s which does not exist in database %s", klass,
-                                         column.key, sa_engine)
+                            logger.error(Fore.LIGHTRED_EX + "Model %s declares column %s which does not exist in "
+                                                            "database %s", klass, column.key, sa_engine)
                             errors = True
                         else:
                             # TODO: Add sanity checks for column types
                             pass
         else:
-            logger.error("Model %s declares table %s which does not exist in database %s", klass, table, sa_engine)
+            logger.error(Fore.LIGHTRED_EX + "Model %s declares table %s which does not exist in database %s", klass,
+                         table, sa_engine)
             errors = True
 
     return not errors
