@@ -1,0 +1,20 @@
+name: cmd2conda
+version: 1.0
+
+channels:
+  - https://repo.anaconda.com/pkgs/main
+  - https://repo.continuum.io/pkgs/free
+  - https://repo.continuum.io/pkgs/r
+  - https://repo.anaconda.com/pkgs/msys2    # [win]
+  - https://conda.anaconda.org/conda-forge
+
+# Warning - conda-forge can contain noarch packages and constructor doesn't support them at this time.
+# This requires the patch in the following PR which will ignore noarch Python packages:
+#    https://github.com/conda/constructor/pull/214
+
+write_condarc: True
+
+specs:
+  - python 3.6*
+  - ipython
+  - cmd2 >= 0.9.4
