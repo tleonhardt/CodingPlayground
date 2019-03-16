@@ -112,8 +112,11 @@ def main(argv=None):
 
     # If the respose is XML, ensure that it is nicely formatted with good indenting and newlines
     if response_str.startswith('<?xml'):
-        import lxml.etree as etree
-        response_bytes = etree.tostring(etree.fromstring(response.content), pretty_print=True)
+        try:
+            import lxml.etree as etree
+            response_bytes = etree.tostring(etree.fromstring(response.content), pretty_print=True)
+        except (ModuleNotFoundError, ImportError):
+            pass
 
     # Pretty-print the content of the response with syntax highlighting for readability
     highlighted_text = highlight(response_bytes, guess_lexer(response_str), TerminalFormatter())
