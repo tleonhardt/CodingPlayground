@@ -151,6 +151,7 @@ def main(argv=None):
                 for line in lines:
                     if line.startswith('region = '):
                         aws_region = line.split('region = ')[1]
+                        break
         except (FileNotFoundError, PermissionError):
             pass
 
