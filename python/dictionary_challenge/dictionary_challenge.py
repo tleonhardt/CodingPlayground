@@ -22,6 +22,9 @@
  etc.
 
  Use your program to find at least 5 words which match this criteria.
+
+ This example showcases the power of Python's built in set type and the
+ associated set theory operations it provides.
 """
 import csv
 
@@ -46,7 +49,7 @@ def find_matches(csv_reader):
             # If the word has 7 letters
             if len(word) == MAGIC_WORD_LENGTH:
                 letters_in_word = set(word)
-                # If the set of vowels is a subset of the letters in the word
+                # If set of vowels is a proper subset of the letters in word
                 if VOWELS < letters_in_word:
                     # If the word has two consonants
                     if has_correct_consonants(letters_in_word, word):
@@ -60,6 +63,7 @@ def has_correct_consonants(letters_in_word: set[str], word: str):
     :param word: (str) word to test
     :return (bool): True if words has exactly two consonants, False otherwise.
     """
+    # consonants is the difference between the set of letters and set of vowels
     consonants = letters_in_word - VOWELS
     num_unique_consonants = len(consonants)
 
