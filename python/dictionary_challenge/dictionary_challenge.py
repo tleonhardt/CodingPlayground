@@ -26,57 +26,42 @@
  This example showcases the power of Python's built in set type and the
  associated set theory operations it provides.
 """
-import csv
-
 DICTIONARY_FILE = "fulldictionary00.txt"
 MAGIC_WORD_LENGTH = 7
 VOWELS = set("aeiou")
 
 
-def find_matches(csv_reader):
-    """Reads a CSV file and returns a list of words matching our criteria.
+def find_matches(filtered_words: list[str]) -> list[str]:
+    """Accepts a list of filtered words that are all of the correct length.
 
-    :param csv_reader: (csv.reader) a reader object which will iterate over
-        lines in a CSV file
-    :return (list): List of words matching our criteria.
+    :param filtered_words: list of words that are all the desired length
+    :return: List of words matching our criteria
     """
     match_list = []
-    for row in csv_reader:
-        # If the row isn't empty
-        if row:
-            # Set the word to the contents of the first cell
-            word = row[0]
-            # If the word has 7 letters
-            if len(word) == MAGIC_WORD_LENGTH:
-                letters_in_word = set(word)
-                # If set of vowels is a proper subset of the letters in word
-                if VOWELS < letters_in_word:
-                    # If the word has two consonants
-                    if has_correct_consonants(letters_in_word, word):
-                        match_list.append(word)
+    for word in filtered_words:
+        letters = set(word)
+        # If set of vowels is a proper subset of the letters in word
+        if VOWELS < letters:
+            # If the word has two consonants
+            if has_correct_consonants(letters, word):
+                match_list.append(word)
     return match_list
 
 
-def has_correct_consonants(letters_in_word: set[str], word: str):
+def has_correct_consonants(letters: set[str], word: str):
     """Make sure the word contains exactly two letters that are not vowels.
 
-    :param word: (str) word to test
+    :param letters_in_word: set of letters in word
+    :param word: word to test
     :return (bool): True if words has exactly two consonants, False otherwise.
     """
     # consonants is the difference between the set of letters and set of vowels
-    consonants = letters_in_word - VOWELS
+    consonants = letters - VOWELS
     num_unique_consonants = len(consonants)
 
-    # We need either 1 or 2 unique consonants for this to be possible
-    if not 1 <= num_unique_consonants <= 2:
-        return False
-
-    # In the case of 1 unique consonant, make sure it is repeated
-    if num_unique_consonants == 1:
-        if word.count(consonants.pop()) != 2:
-            return False
-
-    return True
+    return num_unique_consonants == 2 or (
+        num_unique_consonants == 1 and word.count(consonants.pop()) == 2
+    )
 
 
 def main():
@@ -85,10 +70,13 @@ def main():
     :return (list):  List of words which match the criteria
     """
     with open(DICTIONARY_FILE) as cur_file:
-        # Create a csv.reader object to read a tab-delimited ASCII text file.
-        # And then parse the file.
-        cr = csv.reader(cur_file, delimiter="\t")
-        matches = find_matches(cr)
+        # Read words and filter to those of the desired length
+        words = [
+            line.strip()
+            for line in cur_file.readlines()
+            if len(line.strip()) == MAGIC_WORD_LENGTH
+        ]
+        matches = find_matches(words)
     return matches
 
 
