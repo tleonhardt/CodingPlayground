@@ -60,7 +60,7 @@ def has_correct_consonants(letters: frozenset[str], word: str):
     num_unique_consonants = len(consonants)
 
     return num_unique_consonants == 2 or (
-        num_unique_consonants == 1 and word.count(consonants.pop()) == 2
+        num_unique_consonants == 1 and word.count(next(iter(consonants))) == 2
     )
 
 
