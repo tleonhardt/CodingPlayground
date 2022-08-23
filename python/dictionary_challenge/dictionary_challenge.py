@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
  Given an English dictionary to search, create a program that will find all
  words in the dictionary which match the following criteria:
