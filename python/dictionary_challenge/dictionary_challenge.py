@@ -28,7 +28,7 @@
 """
 DICTIONARY_FILE = "fulldictionary00.txt"
 MAGIC_WORD_LENGTH = 7
-VOWELS = set("aeiou")
+VOWELS = frozenset("aeiou")
 
 
 def find_matches(filtered_words: list[str]) -> list[str]:
@@ -39,7 +39,7 @@ def find_matches(filtered_words: list[str]) -> list[str]:
     """
     match_list = []
     for word in filtered_words:
-        letters = set(word)
+        letters = frozenset(word)
         # If set of vowels is a proper subset of the letters in word
         if VOWELS < letters:
             # If the word has two consonants
@@ -48,7 +48,7 @@ def find_matches(filtered_words: list[str]) -> list[str]:
     return match_list
 
 
-def has_correct_consonants(letters: set[str], word: str):
+def has_correct_consonants(letters: frozenset[str], word: str):
     """Make sure the word contains exactly two letters that are not vowels.
 
     :param letters_in_word: set of letters in word
