@@ -31,21 +31,15 @@ MAGIC_WORD_LENGTH = 7
 VOWELS = frozenset("aeiou")
 
 
-def find_matches(filtered_words: list[str]) -> list[str]:
-    """Accepts a list of filtered words that are all of the correct length.
+def matches_criteria(word: str) -> bool:
+    """Determins if a word matches the criteria.
 
-    :param filtered_words: list of words that are all the desired length
-    :return: List of words matching our criteria
+    :param word: word to test
+    :return: True if it is a match, False otherwise
     """
-    match_list = []
-    for word in filtered_words:
-        letters = frozenset(word)
-        # If set of vowels is a proper subset of the letters in word
-        if VOWELS < letters:
-            # If the word has two consonants
-            if has_correct_consonants(letters, word):
-                match_list.append(word)
-    return match_list
+    letters = frozenset(word)
+    # If set of vowels is a proper subset of the letters and has consonants
+    return VOWELS < letters and has_correct_consonants(letters, word)
 
 
 def has_correct_consonants(letters: frozenset[str], word: str):
@@ -70,13 +64,12 @@ def main():
     :return (list):  List of words which match the criteria
     """
     with open(DICTIONARY_FILE) as cur_file:
-        # Read words and filter to those of the desired length
-        words = [
-            line.strip()
-            for line in cur_file.readlines()
-            if len(line.strip()) == MAGIC_WORD_LENGTH
-        ]
-        matches = find_matches(words)
+        # Read words and filter to those of desired length that match criteria
+        matches = []
+        for line in cur_file.readlines():
+            word = line.strip()
+            if len(word) == MAGIC_WORD_LENGTH and matches_criteria(word):
+                matches.append(word)
     return matches
 
 
